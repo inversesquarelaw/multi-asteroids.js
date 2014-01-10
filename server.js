@@ -2,9 +2,18 @@ var io = require("socket.io");
 var static = require("node-static");
 var Asteroids = require("./asteroids.js");
 
+var PUSH_TIME = 100;
+
 var GameServer = function () {
   this.game = Asteroids.Game.new();
   this.sockets = [];
+}
+
+GameServer.prototype.makePayload = function () {
+  return {
+    game: gameServer.game,
+    seed: Asteroids.Util._seed
+  };
 }
 
 GameServer.prototype.start = function () {
@@ -18,12 +27,9 @@ GameServer.prototype.start = function () {
   setInterval(
     function () {
       gameServer.sockets.forEach(function (socket) {
-        socket.emit("draw", {
-          game: gameServer.game,
-          seed: Asteroids.Util._seed
-        });
+        socket.emit("draw", gameServer.makePayload());
       });
-    }, 100
+    }, PUSH_TIME
   );
 };
 
@@ -37,10 +43,7 @@ GameServer.prototype.addSocket = function (socket) {
   socket.on("fire", function () { ship.fireBullet(); });
   socket.on("disconnect", function () { game.remove(ship) });
 
-  socket.emit("firstDraw", {
-    game: gameServer.game,
-    seed: Asteroids.Util._seed
-  });
+  socket.emit("firstDraw", gameServer.makePayload());
 };
 
 var fileServer = new static.Server('./');

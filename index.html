@@ -24,7 +24,8 @@
 
         var socket = io.connect();
         var ctx = canvas.get(0).getContext("2d");
-        new Asteroids.GameClientView(socket, ctx).connect();
+        window.clientView = new Asteroids.GameClientView(socket, ctx);
+        window.clientView.connect();
       });
     </script>
  </body>

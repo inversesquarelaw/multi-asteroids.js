@@ -5,18 +5,16 @@
     function (socket, ctx) {
       this.socket = socket;
       this.ctx = ctx;
+      // TODO: Hardcoded, because my clock-skew with Heroku is
+      // ~+6000ms.
+      this.clockSkew = 6000;
     };
 
   GameClientView.MOVES = {
-    "q": [-1, -1],
     "w": [ 0, -1],
-    "e": [ 1, -1],
     "a": [-1,  0],
-    "s": [ 0,  0],
+    "s": [ 0,  1],
     "d": [ 1,  0],
-    "z": [-1,  1],
-    "x": [ 0,  1],
-    "c": [ 1,  1]
   };
 
   GameClientView.prototype.bindKeyHandlers = function () {
@@ -26,20 +24,18 @@
       var move = GameClientView.MOVES[k];
       key(k, function () {
         view.socket.emit("move", move);
-        view.ship().power(move);
       });
     });
 
     key("space", function () {
       view.socket.emit("fire")
-      view.ship().fireBullet();
     });
   };
 
   GameClientView.prototype.loadState = function (json) {
     Asteroids.Util._seed = json.seed;
+    json.game.lastTickTime += this.clockSkew;
     this.game = Asteroids.Game.fromJSON(json.game);
-    this.game.draw(this.ctx);
   };
 
   GameClientView.prototype.ship = function () {
