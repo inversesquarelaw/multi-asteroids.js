@@ -59,4 +59,4 @@ io.listen(httpServer).on("connection", function (socket) {
   gameServer.addSocket(socket);
 });
 
-httpServer.listen(8080);
+httpServer.listen(process.env.PORT);
