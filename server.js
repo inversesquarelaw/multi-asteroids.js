@@ -55,7 +55,9 @@ var httpServer = require("http").createServer(
 
 var gameServer = new GameServer();
 gameServer.start();
-io.listen(httpServer).on("connection", function (socket) {
+var socketServer = io.listen(httpServer);
+socketServer.set("log level", 2);
+socketServer.on("connection", function (socket) {
   gameServer.addSocket(socket);
 });
 
