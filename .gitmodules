@@ -1,0 +1,3 @@
+[submodule "asteroids.js"]
+	path = asteroids.js
+	url = git@github.com:appacademy-solutions/asteroids.js.git

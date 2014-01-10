@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script type="application/javascript" src="asteroids.js/vendor/jquery-1.9.1.js"></script>
+    <script type="application/javascript" src="asteroids.js/vendor/keymaster.js"></script>
+
+    <script type="application/javascript" src="http://localhost:8000/socket.io/socket.io.js"></script>
+
+    <script type="application/javascript" src="asteroids.js/lib/util.js"></script>
+    <script type="application/javascript" src="asteroids.js/lib/moving_object.js"></script>
+    <script type="application/javascript" src="asteroids.js/lib/asteroid.js"></script>
+    <script type="application/javascript" src="asteroids.js/lib/ship.js"></script>
+    <script type="application/javascript" src="asteroids.js/lib/bullet.js"></script>
+    <script type="application/javascript" src="asteroids.js/lib/game.js"></script>
+
+    <script type="application/javascript" src="game_client_view.js"></script>
+  </head>
+
+  <body>
+    <script type="application/javascript">
+      $(function () {
+        var canvas = $("<canvas width='" + Asteroids.Game.DIM_X + 
+                       "' height='" + Asteroids.Game.DIM_Y + "'></canvas>");
+        $('body').append(canvas);
+
+        var socket = io.connect("http://localhost:8000");
+        var ctx = canvas.get(0).getContext("2d");
+        new Asteroids.GameClientView(socket, ctx).connect();
+      });
+    </script>
+  </body>
+</head>
