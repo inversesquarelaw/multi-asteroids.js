@@ -37,7 +37,8 @@
   };
 
   GameClientView.prototype.loadState = function (json) {
-    this.game = Asteroids.Game.fromJSON(json);
+    Asteroids.Util._seed = json.seed;
+    this.game = Asteroids.Game.fromJSON(json.game);
     this.game.draw(this.ctx);
   };
 
@@ -73,7 +74,6 @@
       view.loadState(json);
 
       view.shipId = view.game.ships[view.game.ships.length - 1]._id;
-      debugger
       view.start();
     });
   };

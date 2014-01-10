@@ -3,7 +3,7 @@
     <script type="application/javascript" src="asteroids.js/vendor/jquery-1.9.1.js"></script>
     <script type="application/javascript" src="asteroids.js/vendor/keymaster.js"></script>
 
-    <script type="application/javascript" src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <script type="application/javascript" src="/socket.io/socket.io.js"></script>
 
     <script type="application/javascript" src="asteroids.js/lib/util.js"></script>
     <script type="application/javascript" src="asteroids.js/lib/moving_object.js"></script>
@@ -22,10 +22,10 @@
                        "' height='" + Asteroids.Game.DIM_Y + "'></canvas>");
         $('body').append(canvas);
 
-        var socket = io.connect("http://localhost:8000");
+        var socket = io.connect();
         var ctx = canvas.get(0).getContext("2d");
         new Asteroids.GameClientView(socket, ctx).connect();
       });
     </script>
-  </body>
+ </body>
 </head>
