@@ -42,6 +42,9 @@ GameServer.prototype.addSocket = function (socket) {
   socket.on("move", function (move) { ship.power(move); });
   socket.on("fire", function () { ship.fireBullet(); });
   socket.on("disconnect", function () { game.remove(ship) });
+  socket.on("ping", function () {
+    socket.emit("pong", (new Date()).getTime());
+  });
 
   socket.emit("firstDraw", gameServer.makePayload());
 };

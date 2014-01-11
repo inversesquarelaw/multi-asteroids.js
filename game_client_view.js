@@ -5,9 +5,7 @@
     function (socket, ctx) {
       this.socket = socket;
       this.ctx = ctx;
-      // TODO: Hardcoded, because my clock-skew with Heroku is
-      // ~+6000ms.
-      this.clockSkew = 6000;
+      this.clockSkew = 0;
     };
 
   GameClientView.MOVES = {
@@ -32,6 +30,19 @@
     });
   };
 
+  GameClientView.prototype.connect = function () {
+    this.calcClockSkew();
+    this.socket.on("draw", this.loadState.bind(this));
+    this.socket.on("firstDraw", this.firstLoadState.bind(this));
+  };
+
+  GameClientView.prototype.firstLoadState = function (json) {
+    this.loadState(json);
+    this.shipId = this.game.ships[this.game.ships.length - 1]._id;
+
+    this.startPlaying();
+  };
+
   GameClientView.prototype.loadState = function (json) {
     Asteroids.Util._seed = json.seed;
     json.game.lastTickTime += this.clockSkew;
@@ -49,28 +60,28 @@
     throw "wtf";
   };
 
-  GameClientView.prototype.start = function () {
+  GameClientView.prototype.startPlaying = function () {
     var view = this;
 
     this.bindKeyHandlers();
-
     setInterval(
       function () {
         view.game.step();
         view.game.draw(view.ctx);
       }, 1000 / Asteroids.Game.FPS
     );
-  }
+  };
 
-  GameClientView.prototype.connect = function () {
+  GameClientView.prototype.calcClockSkew = function () {
     var view = this;
 
-    this.socket.on("draw", this.loadState.bind(this));
-    this.socket.on("firstDraw", function (json) {
-      view.loadState(json);
+    var startTime = (new Date()).getTime();
+    this.socket.emit("ping");
+    this.socket.once("pong", function (serverTime) {
+      var endTime = (new Date()).getTime();
+      var latency = (endTime - startTime) / 2;
 
-      view.shipId = view.game.ships[view.game.ships.length - 1]._id;
-      view.start();
+      view.clockSkew = (startTime + latency) - serverTime;
     });
   };
 })(this);
