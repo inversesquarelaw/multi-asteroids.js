@@ -79,7 +79,9 @@
     this.socket.emit("ping");
     this.socket.once("pong", function (serverTime) {
       var endTime = (new Date()).getTime();
-      var latency = (endTime - startTime) / 2;
+      // I feel like (endTime - startTime) / 2 is a better
+      // approximation of latency, but this seems to work better?
+      var latency = (endTime - startTime);
 
       view.clockSkew = (startTime + latency) - serverTime;
     });
